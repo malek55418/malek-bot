@@ -1,7 +1,6 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
-// إعدادات البوت
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
@@ -10,15 +9,19 @@ const client = new Client({
     }
 });
 
-// إظهار الكود بشكل أوضح
 client.on('qr', (qr) => {
-    // جربنا الـ false عشان المربعات تكون أوضح لو الشاشة كبيرة
-    qrcode.generate(qr, {small: false});
-    console.log('--- الكود الجديد وصل يا مالك.. جرب تمسحه دلوقتي ---');
+    // هيطبع لك الكود مكسر كالعادة (احتياطي)
+    qrcode.generate(qr, {small: true});
+    
+    // وهيطبع لك الرابط ده.. خده كوبي وافتحه في صفحة جديدة
+    console.log('--------------------------------------------');
+    console.log('لو الكود مكسر افتح الرابط ده عشان تشوفه نظيف:');
+    console.log(`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qr)}&size=300x300`);
+    console.log('--------------------------------------------');
 });
 
 client.on('ready', () => {
-    console.log('✅ مبروك يا وحش.. البوت اشتغل والواتساب اتربط!');
+    console.log('✅ مبروك يا مالك.. البوت اشتغل!');
 });
 
 client.initialize();

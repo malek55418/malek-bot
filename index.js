@@ -2,32 +2,36 @@ const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
 const client = new Client({
-    authStrategy: new LocalAuth({ dataPath: './sessions' }),
+    // شيلنا مسار الـ Sessions عشان ميعملش تعارض في الأول
+    authStrategy: new LocalAuth(), 
     puppeteer: {
         headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--single-process', // عشان ميسحبش رامات كتير
+            '--disable-gpu'
+        ]
     }
 });
 
 client.on('qr', (qr) => {
-    console.log('امسح الكود من الرابط ده:');
+    console.log('--- كود جديد ---');
     console.log(`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qr)}&size=300x300`);
 });
 
 client.on('ready', () => {
-    console.log('✅ البوت شغال دلوقتي.. جرب تبعت كلمة (بنج)');
+    console.log('✅✅ البوت نطق يا مالك! جرب دلوقتي');
 });
 
 client.on('message', async msg => {
-    // الرد على كلمة بنج
     if (msg.body === 'بنج') {
-        msg.reply('بونج! البوت شغال يا مالك ⚡');
-    }
-
-    // الرد على كلمة المطور
-    if (msg.body === 'المطور') {
-        msg.reply('مالك هو عم الناس والمطور بتاعنا 👑');
+        msg.reply('بونج! شغال يا وحش ⚡');
     }
 });
 
-client.initialize();
+client.initialize().catch(err => console.log('خطأ في التشغيل:', err));
